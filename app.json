@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Gamebook",
+    "slug": "Gamebook",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "userInterfaceStyle": "light",
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.felipe.test",
+      "userInterfaceStyle": "light"
+    },
+    "android": {
+      "config": {
+        "googleSignIn": {
+          "apiKey": "AIzaSyBQnnJyaC-CTJ_nETPIJF_hQ-OLYQOUrhw",
+          "certificateHash": "C1FD91FF7280917D7224F55868C828276992FBA9"
+        }
+      },
+      "userInterfaceStyle": "light",
+      "package": "com.gamebook",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
