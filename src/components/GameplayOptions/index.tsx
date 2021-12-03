@@ -3,7 +3,7 @@ import { Feather as Icon } from '@expo/vector-icons';
 import { Text, StyleSheet, View, TouchableOpacity, ScrollView, SafeAreaView, FlatList, TouchableWithoutFeedback, Modal, Pressable, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectOption, showPlatformSelection } from '../../actions';
+import { selectOption, selectPlaylistOption, showPlatformSelection } from '../../actions';
 import { RootState } from '../../reducers';
 import { RectButton } from 'react-native-gesture-handler';
 import api from '../../services/api';
@@ -19,7 +19,7 @@ import { showMessage } from 'react-native-flash-message';
 const GameplayOptions = (props) => {
     const isPlaylistPage = props.page == 'playlist';
     const game: GameDetail = props.game;
-    const selectedOption = useSelector((state: RootState) => state.optionState);
+    const selectedOption = isPlaylistPage ? useSelector((state: RootState) => state.playlistState) : useSelector((state: RootState) => state.optionState);
     const modalVisible = useSelector((state: RootState) => state.PlatformSelectionState);
     const [auxOption, setAuxOption] = useState<number>();
     const dispatch = useDispatch();
@@ -55,7 +55,7 @@ const GameplayOptions = (props) => {
     ];
 
     useEffect(() => {
-        
+
         if (isPlaylistPage) {
             return;
         }
@@ -128,23 +128,22 @@ const GameplayOptions = (props) => {
 
     function handleSelectedStatus(item: number) {
         if (selectedOption == item) {
-            dispatch(selectOption(null));
-            if (!isPlaylistPage) {
+            if (isPlaylistPage) {
+                dispatch(selectPlaylistOption(null));
+            } else {
+                dispatch(selectOption(null));
                 showMessage({
                     message: `${game.igdbData.title} removido da sua lista!`,
                     type: "success",
                 });
                 removeGame();
             }
+
         } else {
             if (!isPlaylistPage && item !== 1) {
-                // setModalVisible(true);
                 dispatch(showPlatformSelection(true));
                 setAuxOption(item);
-                // so dar o dispatch qnd concluir
             } else {
-                // dispatch(selectOption(item));
-
                 handlePlaylistPage(item);
                 if (!isPlaylistPage) {
                     updateWishlistStatus(item);
@@ -158,7 +157,7 @@ const GameplayOptions = (props) => {
     }
 
     function handlePlaylistPage(item: number) {
-        dispatch(selectOption(item));
+        dispatch(selectPlaylistOption(item));
     }
 
     const renderItem = ({ item }) => {
@@ -184,6 +183,7 @@ const GameplayOptions = (props) => {
                         renderItem={renderItem}
                         keyExtractor={(item) => String(item.id)}
                         numColumns={4}
+                        listKey="gamePlayOptions"
                     />
                 </ScrollView>
             </View>

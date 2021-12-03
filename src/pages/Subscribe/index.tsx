@@ -23,6 +23,7 @@ const Subscribe = () => {
     const [emailTerm, setEmailTerm] = useState('');
     const [passwordTerm, setPasswordTerm] = useState('');
     const [confirmPasswordTerm, setConfirmPasswordTerm] = useState('');
+    const [showLoading, setShowLoading] = useState(false);
     const [textVisible, setTextVisible] = useState(true);
 
     const navigation = useNavigation();
@@ -47,6 +48,7 @@ const Subscribe = () => {
             });
         } else {
             setTextVisible(false);
+            setShowLoading(true);
             trackPromise(
                 api.post<Token>(`/signUp`, { email: emailTerm, password: passwordTerm, confirmPassword: confirmPasswordTerm }).then(response => {
                     // dispatch(signUp(response.data.access_token));
@@ -55,10 +57,12 @@ const Subscribe = () => {
                         type: "success",
                     });
                     setTextVisible(true);
+                    setShowLoading(false)
                     navigation.navigate('FillCode', { option: 'accountCreation', email: emailTerm });
                 }).catch((err: AxiosError) => {
                     Alert.alert(err.response.data.message);
                     setTextVisible(true);
+                    setShowLoading(false)
                 }));
         }
     }
@@ -131,6 +135,7 @@ const Subscribe = () => {
                         style={styles.loginButton}
                     >
                         <Loading subscribe={true} />
+                        {showLoading && <Loading login={true} />}
                         {textVisible && <Text style={styles.textStyle}>Criar conta</Text>}
                     </Pressable>
                 </View>

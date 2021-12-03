@@ -22,25 +22,32 @@ const Platforms = () => {
     const [platformsData, setPlatformsData] = useState<Platform[]>([]);
 
     useEffect(() => {
+        let mounted = true;
         api.get<Platform[]>(`/getPlatforms`).then(response => {
-            setPlatformsData(response.data);
-            let userPlaforms = response.data.filter(p => selectedPlatforms.find(t => t === p.externalId));
-            setPlatforms(userPlaforms);
+            if (mounted) {
+                setPlatformsData(response.data);
+                let userPlaforms = response.data.filter(p => selectedPlatforms.find(t => t === p.externalId));
+                setPlatforms(userPlaforms);
+            }
         });
+        return () => mounted = false;
     }, []);
 
     useEffect(() => {
+        let mounted = true;
         if (token && token !== '') {
             api.get<string[]>(`/getPlatformPreferences`, {
                 headers: {
                     'x-access-token': token
                 }
             }).then(response => {
-                if (response?.data?.length > 0) {
+                if (response?.data?.length > 0 && mounted) {
+                    console.log("OK");
                     dispatch(replacePlatforms(response.data.map(p => Number(p))));
                 }
             });
         }
+        return () => mounted = false;
     }, [token]);
 
     useEffect(() => {

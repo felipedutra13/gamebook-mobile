@@ -39,7 +39,7 @@ const GameInfo = (props) => {
                     <Text style={styles.rating}>{game.aggregatedRating}</Text>
                     <View style={styles.platformsContainer}>
                         {game.platforms &&
-                            <PlatformsList platforms={game.platforms} />
+                            <PlatformsList platforms={game.platforms} prices={game.prices}/>
                         }
                     </View>
                 </View>

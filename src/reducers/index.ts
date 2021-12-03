@@ -6,6 +6,7 @@ import PlatformSelection from './PlatformSelectionReducer';
 import AuthReducer from './AuthReducer';
 import FilteredPlatformsReducer from './FilteredPlatformsReducer';
 import EmailReducer from './EmailReducer';
+import PlaylistOptionReducer from './PlaylistOptionReducer';
 
 const Reducers = combineReducers({
   platformsState: PlatformsReducer,
@@ -14,7 +15,8 @@ const Reducers = combineReducers({
   PlatformSelectionState: PlatformSelection,
   authState: AuthReducer,
   emailState: EmailReducer,
-  filteredPlatformsState: FilteredPlatformsReducer
+  filteredPlatformsState: FilteredPlatformsReducer,
+  playlistState: PlaylistOptionReducer
 });
 
 export default Reducers;

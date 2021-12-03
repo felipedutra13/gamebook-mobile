@@ -19,6 +19,10 @@ export const selectOption = (option: number) => {
   return { type: 'CHANGE_OPTION', option: option };
 };
 
+export const selectPlaylistOption = (option: number) => {
+  return { type: 'CHANGE_OPTION', option: option };
+};
+
 export const showPlatformSelection = (option: boolean) => {
   return { type: 'CHANGE_VISIBILITY', option: option };
 };

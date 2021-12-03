@@ -1,27 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Feather as Icon } from '@expo/vector-icons';
-import { Text, StyleSheet, TouchableOpacity, Image, View, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { Text, StyleSheet, View, FlatList } from 'react-native';
 import api from '../../services/api';
-import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
-import { RectButton } from 'react-native-gesture-handler';
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';
 import Platforms from '../../components/Platforms';
 import GameplayOptions from '../../components/GameplayOptions';
 import GameInfo from '../../components/GameInfo';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../reducers';
 import { trackPromise } from 'react-promise-tracker';
 import Loading from '../../components/Loading';
-import * as SecureStore from 'expo-secure-store';
-
-
-interface Platform {
-    id: number;
-    namge: string;
-    image_url: string;
-};
 
 interface Game {
     id: number;
@@ -29,33 +17,113 @@ interface Game {
     imageUrl: string;
 };
 
-const Playlist = () => {
-    const navigation = useNavigation();
+const renderItem = ({ item }) => {
+    return (
+        <GameInfo key={String(item.id)} game={item} />
+    );
+};
 
-    const selectedOption = useSelector((state: RootState) => state.optionState);
+const renderHeader = (total) => {
+    return (
+        <>
+            <Platforms />
+
+            <GameplayOptions page='playlist' />
+
+            <View style={styles.list}>
+                <Text style={styles.textList}>
+                    {total} títulos
+                </Text>
+            </View>
+        </>
+    );
+};
+
+
+
+const Playlist = () => {
+    const selectedOption = useSelector((state: RootState) => state.playlistState);
     const selectedPlatforms = useSelector((state: RootState) => state.platformsState);
     const filteredPlatforms = useSelector((state: RootState) => state.filteredPlatformsState);
     const token = useSelector((state: RootState) => state.authState);
 
+    const [offset, setOffset] = useState(0);
     const [games, setGames] = useState<Game[]>([]);
+    const [gamesTotal, setGamesTotal] = useState(0);
+
+    const [moreGames, setMoreGames] = useState(true);
 
     useEffect(() => {
+
+        setMoreGames(false);
+        setOffset(0);
+        setGamesTotal(0);
         setGames([]);
+
+        let mounted = true;
         trackPromise(
-            api.get<Game[]>(`/getGamesByStatus`, {
+            api.get(`/getGamesByStatus`, {
                 params: {
                     status_id: selectedOption,
-                    platform_ids: selectedPlatforms.filter(p => !filteredPlatforms.find(f => f == p))
+                    platform_ids: selectedPlatforms.filter(p => !filteredPlatforms.find(f => f == p)),
+                    offset: 0
                 },
                 headers: {
                     'x-access-token': token
                 }
             }
             ).then(response => {
-                setGames(response.data);
+                if (mounted) {
+                    console.log("TROUXE = " + response.data.games.length + " | " + response.data.total);
+                    setGames(response.data.games);
+                    setGamesTotal(response.data.total);
+
+                }
             })
         );
+
+        return () => mounted = false;
     }, [selectedOption, selectedPlatforms, filteredPlatforms]);
+
+    // Busca mais resultados
+    useEffect(() => {
+
+        let mounted = true;
+
+        if (offset > 0) {
+            trackPromise(
+                api.get(`/getGamesByStatus`, {
+                    params: {
+                        status_id: selectedOption,
+                        platform_ids: selectedPlatforms.filter(p => !filteredPlatforms.find(f => f == p)),
+                        offset: offset
+                    },
+                    headers: {
+                        'x-access-token': token
+                    }
+                }
+                ).then(response => {
+                    if (mounted) {
+                        let tmp = games;
+                        let result = tmp.concat(response.data.games);
+                        setGames(result);
+                        setGamesTotal(response.data.total);
+                    }
+                })
+            );
+        }
+
+        return () => mounted = false;
+    }, [offset]);
+
+    function getMoreGames() {
+        if (games.length < gamesTotal) {
+            setMoreGames(true);
+            let increment = offset + 10;
+            setOffset(increment);
+        }
+    }
+
 
     return (
         <>
@@ -64,33 +132,21 @@ const Playlist = () => {
 
                 <Header showLogo={true} />
 
-                <Loading searchTermChanged={true} />
+                <Loading searchTermChanged={!moreGames} />
 
-                <View>
-                    {games && (
-                        <ScrollView style={styles.scrollteste}>
-
-                            <Platforms />
-
-                            <GameplayOptions page='playlist' />
-
-                            <View style={styles.list}>
-                                <Text style={styles.textList}>
-                                    {games.length} títulos
-                                </Text>
-                                {/* <Text style={styles.textList}>
-                                ordernado por Relevância
-                            </Text> */}
-                            </View>
-
-                            <View>
-                                {games.map(game => (
-                                    <GameInfo key={String(game.id)} game={game} />
-                                ))}
-                            </View>
-
-                        </ScrollView>
-                    )}
+                <View style={styles.scrollteste}>
+                    <FlatList
+                        data={games}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => String(item.id)}
+                        onEndReachedThreshold={0.5}
+                        onEndReached={({distanceFromEnd }) => {
+                            if (distanceFromEnd < 0) return;
+                            getMoreGames();
+                        }}
+                        numColumns={1}
+                        ListHeaderComponent={() => renderHeader(gamesTotal)}
+                    />
                 </View>
 
                 <Footer option='Playlist' />

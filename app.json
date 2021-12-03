@@ -4,11 +4,10 @@
     "slug": "Gamebook",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon-gb.png",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/splash-gb.png",
+      "backgroundColor": "#000000"
     },
     "userInterfaceStyle": "light",
     "updates": {
@@ -32,7 +31,7 @@
       "userInterfaceStyle": "light",
       "package": "com.gamebook",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon-gb.png",
         "backgroundColor": "#FFFFFF"
       }
     },

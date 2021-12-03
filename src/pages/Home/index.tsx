@@ -37,7 +37,7 @@ const Home = ({navigation}) => {
         }, err => {
             return new Promise((resolve, reject) => {
                 const originalReq = err.config;
-                if (err.response.status === 401 && err.config && !err.config.retry) {
+                if (err.response && err.response.status === 401 && err.config && !err.config.retry) {
                     originalReq.retry = true;
                     SecureStore.getItemAsync('token').then(res => {
                         api.put(`/refreshToken`, null,
