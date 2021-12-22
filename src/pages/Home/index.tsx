@@ -5,6 +5,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Platforms from '../../components/Platforms';
 import Cover from '../../components/Cover';
+import { replacePlatforms } from '../../actions';
 import { Platform } from '../../interfaces/Platform';
 import { setEmail, signIn, signUp } from '../../actions';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +18,7 @@ import * as SecureStore from 'expo-secure-store';
 import axios, { AxiosError } from 'axios';
 import { showMessage } from 'react-native-flash-message';
 
-const Home = ({navigation}) => {
+const Home = ({ navigation }) => {
     // const navigation = useNavigation();
     const dispatch = useDispatch();
 
@@ -31,6 +32,10 @@ const Home = ({navigation}) => {
         return state.filteredPlatformsState
     });
 
+    const token = useSelector((state: RootState) => {
+        return state.authState
+    });
+
     function defineInterceptor() {
         api.interceptors.response.use(response => {
             return response;
@@ -38,6 +43,7 @@ const Home = ({navigation}) => {
             return new Promise((resolve, reject) => {
                 const originalReq = err.config;
                 if (err.response && err.response.status === 401 && err.config && !err.config.retry) {
+                    console.log("TOKEN VENCIDO!");
                     originalReq.retry = true;
                     SecureStore.getItemAsync('token').then(res => {
                         api.put(`/refreshToken`, null,
@@ -49,6 +55,7 @@ const Home = ({navigation}) => {
                                 dispatch(signIn(response.data.access_token));
                                 dispatch(setEmail(response.data.email));
                                 originalReq.headers['x-access-token'] = response.data.access_token;
+                                console.log("REFRESH TOKEN!");
                                 return axios(originalReq);
                             });
                         resolve(res);
@@ -86,9 +93,24 @@ const Home = ({navigation}) => {
 
     useEffect(() => {
         defineInterceptor();
+    }, []);
+
+    useEffect(() => {
+        // defineInterceptor();
         SecureStore.getItemAsync('token').then(res => {
             if (res !== null && res !== '') {
                 dispatch(signIn(res));
+
+                api.get<string[]>(`/getPlatformPreferences`, {
+                    headers: {
+                        'x-access-token': res
+                    }
+                }).then(response => {
+                    if (response?.data?.length > 0) {
+                        console.log("SETOU O PLATFORMS");
+                        dispatch(replacePlatforms(response.data.map(p => Number(p))));
+                    }
+                });
             }
         });
         SecureStore.getItemAsync('email').then(res => {
@@ -96,7 +118,7 @@ const Home = ({navigation}) => {
                 dispatch(setEmail(res));
             }
         });
-    }, []);
+    }, [token]);
 
     return (
         <>
@@ -120,7 +142,7 @@ const Home = ({navigation}) => {
                                             horizontal
                                             showsHorizontalScrollIndicator={false}>
                                             {gameByCategory.games.map(game => (
-                                                <Cover key={String(game.id)} game={game} navigation={navigation}/>
+                                                <Cover key={String(game.id)} game={game} navigation={navigation} />
                                             ))}
                                         </ScrollView>
                                     </View>

@@ -2,9 +2,15 @@ import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import PlatformsList from '../PlatformsList';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../reducers';
 
 const GameInfo = (props) => {
     const game = props.game;
+    const filteredPlatforms = useSelector((state: RootState) => state.filteredPlatformsState);
+    const selectedPlatforms = useSelector((state: RootState) => state.platformsState);
+
+    const platforms = game.platforms.filter(p => selectedPlatforms.find(f => f == p || f == p.id));
 
     const navigation = useNavigation();
 
@@ -22,28 +28,30 @@ const GameInfo = (props) => {
 
     return (
         <>
-            <TouchableOpacity
-                key={String(game.id)}
-                style={styles.gameContainer}
-                onPress={() => handleGameSelect(game.id, game.title)}
-            >
-                {game.imageUrl != "" &&
-                    <View style={styles.imageContainer}>
-                        <Image style={styles.gameImage} source={{ uri: game.imageUrl }} />
-                    </View>
-                }
+            {platforms.length > 0 &&
+                <TouchableOpacity
+                    key={String(game.id)}
+                    style={styles.gameContainer}
+                    onPress={() => handleGameSelect(game.id, game.title)}
+                >
+                    {game.imageUrl != "" &&
+                        <View style={styles.imageContainer}>
+                            <Image style={styles.gameImage} source={{ uri: game.imageUrl }} />
+                        </View>
+                    }
 
-                <View style={styles.info}>
-                    <Text style={styles.title}>{formatName(game.title)}</Text>
-                    <Text style={styles.releaseDate}>{game.releaseDate}</Text>
-                    <Text style={styles.rating}>{game.aggregatedRating}</Text>
-                    <View style={styles.platformsContainer}>
-                        {game.platforms &&
-                            <PlatformsList platforms={game.platforms} prices={game.prices}/>
-                        }
+                    <View style={styles.info}>
+                        <Text style={styles.title}>{formatName(game.title)}</Text>
+                        <Text style={styles.releaseDate}>{game.releaseDate}</Text>
+                        <Text style={styles.rating}>{game.aggregatedRating}</Text>
+                        <View style={styles.platformsContainer}>
+                            {game.platforms &&
+                                <PlatformsList platforms={platforms} prices={game.prices} />
+                            }
+                        </View>
                     </View>
-                </View>
-            </TouchableOpacity>
+                </TouchableOpacity>
+            }
         </>
     )
 };

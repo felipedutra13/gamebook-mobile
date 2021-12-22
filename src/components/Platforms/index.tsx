@@ -34,23 +34,6 @@ const Platforms = () => {
     }, []);
 
     useEffect(() => {
-        let mounted = true;
-        if (token && token !== '') {
-            api.get<string[]>(`/getPlatformPreferences`, {
-                headers: {
-                    'x-access-token': token
-                }
-            }).then(response => {
-                if (response?.data?.length > 0 && mounted) {
-                    console.log("OK");
-                    dispatch(replacePlatforms(response.data.map(p => Number(p))));
-                }
-            });
-        }
-        return () => mounted = false;
-    }, [token]);
-
-    useEffect(() => {
         let userPlaforms = platformsData.filter(p => selectedPlatforms.find(t => t === p.externalId));
         setPlatforms(userPlaforms);
     }, [selectedPlatforms]);

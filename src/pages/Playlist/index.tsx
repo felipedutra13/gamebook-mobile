@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../reducers';
 import { trackPromise } from 'react-promise-tracker';
 import Loading from '../../components/Loading';
+import RNPickerSelect from 'react-native-picker-select';
 
 interface Game {
     id: number;
@@ -17,27 +18,6 @@ interface Game {
     imageUrl: string;
 };
 
-const renderItem = ({ item }) => {
-    return (
-        <GameInfo key={String(item.id)} game={item} />
-    );
-};
-
-const renderHeader = (total) => {
-    return (
-        <>
-            <Platforms />
-
-            <GameplayOptions page='playlist' />
-
-            <View style={styles.list}>
-                <Text style={styles.textList}>
-                    {total} títulos
-                </Text>
-            </View>
-        </>
-    );
-};
 
 
 
@@ -52,9 +32,9 @@ const Playlist = () => {
     const [gamesTotal, setGamesTotal] = useState(0);
 
     const [moreGames, setMoreGames] = useState(true);
+    const [orderBy, setOrderBy] = useState('name');
 
     useEffect(() => {
-
         setMoreGames(false);
         setOffset(0);
         setGamesTotal(0);
@@ -66,7 +46,8 @@ const Playlist = () => {
                 params: {
                     status_id: selectedOption,
                     platform_ids: selectedPlatforms.filter(p => !filteredPlatforms.find(f => f == p)),
-                    offset: 0
+                    offset: 0,
+                    order_by: orderBy
                 },
                 headers: {
                     'x-access-token': token
@@ -74,7 +55,6 @@ const Playlist = () => {
             }
             ).then(response => {
                 if (mounted) {
-                    console.log("TROUXE = " + response.data.games.length + " | " + response.data.total);
                     setGames(response.data.games);
                     setGamesTotal(response.data.total);
 
@@ -83,11 +63,10 @@ const Playlist = () => {
         );
 
         return () => mounted = false;
-    }, [selectedOption, selectedPlatforms, filteredPlatforms]);
+    }, [selectedOption, selectedPlatforms, filteredPlatforms, orderBy]);
 
     // Busca mais resultados
     useEffect(() => {
-
         let mounted = true;
 
         if (offset > 0) {
@@ -96,7 +75,8 @@ const Playlist = () => {
                     params: {
                         status_id: selectedOption,
                         platform_ids: selectedPlatforms.filter(p => !filteredPlatforms.find(f => f == p)),
-                        offset: offset
+                        offset: offset,
+                        order_by: orderBy
                     },
                     headers: {
                         'x-access-token': token
@@ -124,6 +104,65 @@ const Playlist = () => {
         }
     }
 
+    const renderItem = ({ item }) => {
+        return (
+            <GameInfo key={String(item.id)} game={item} />
+        );
+    };
+
+    const renderHeader = (total) => {
+        return (
+            <>
+                <Platforms />
+
+                <GameplayOptions page='playlist' />
+
+                <View style={styles.list}>
+                    <Text style={styles.textList}>
+                        {total} títulos
+                    </Text>
+                    <Text style={styles.textList}>organizados por</Text>
+                    <RNPickerSelect
+                        style={{
+                            ...pickerSelectStyles, iconContainer: {
+                                top: 8,
+                                right: 0,
+                            }
+                        }}
+                        useNativeAndroidPickerStyle={false}
+                        onValueChange={(value) => setOrderBy(value)}
+                        value={orderBy}
+                        items={[
+                            { label: 'Preço', value: 'price' },
+                            { label: 'Desconto (%)', value: 'discountPercent' },
+                            { label: 'Rating', value: 'aggregated_rating' },
+                            { label: 'Data de lançamento', value: 'first_release_date' }
+                        ]}
+                        placeholder={{ label: 'Nome', value: 'name' }}
+                        Icon={() => {
+                            return (
+                                <View
+                                    style={{
+                                        backgroundColor: 'transparent',
+                                        borderTopWidth: 10,
+                                        borderTopColor: '#fff',
+                                        borderRightWidth: 10,
+                                        borderRightColor: 'transparent',
+                                        borderLeftWidth: 10,
+                                        borderLeftColor: 'transparent',
+                                        width: 0,
+                                        height: 0,
+                                    }}
+                                />
+                            );
+                        }}
+                    />
+                </View>
+            </>
+        );
+    };
+
+
 
     return (
         <>
@@ -140,7 +179,7 @@ const Playlist = () => {
                         renderItem={renderItem}
                         keyExtractor={(item) => String(item.id)}
                         onEndReachedThreshold={0.5}
-                        onEndReached={({distanceFromEnd }) => {
+                        onEndReached={({ distanceFromEnd }) => {
                             if (distanceFromEnd < 0) return;
                             getMoreGames();
                         }}
@@ -157,6 +196,33 @@ const Playlist = () => {
 };
 
 export default Playlist;
+
+const pickerSelectStyles = StyleSheet.create({
+    inputIOS: {
+        fontSize: 16,
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        borderWidth: 1,
+        borderColor: 'gray',
+        borderRadius: 4,
+        color: 'white',
+        paddingRight: 30, // to ensure the text is never behind the icon
+    },
+    inputAndroid: {
+        // paddingLeft: -30,
+        top: -3,
+        // left: -40,
+        fontSize: 14,
+        color: "#fff",
+        // paddingHorizontal: 10,
+        // paddingVertical: 8,
+        // borderWidth: 0.5,
+        // borderColor: 'red',
+        // borderRadius: 8,
+        // color: 'red',
+        paddingRight: 30, // to ensure the text is never behind the icon
+    },
+});
 
 const styles = StyleSheet.create({
     test: {
@@ -183,8 +249,8 @@ const styles = StyleSheet.create({
     },
 
     textList: {
-        marginRight: 30,
-        fontSize: 16,
+        marginRight: 10,
+        fontSize: 14,
         color: "#fff"
     },
 
@@ -386,5 +452,9 @@ const styles = StyleSheet.create({
         left: 10,
         fontSize: 25,
         fontFamily: "Roboto_400Regular"
+    },
+
+    pickerSelect: {
+        color: "#fff"
     }
 });

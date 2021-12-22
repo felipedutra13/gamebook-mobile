@@ -20,7 +20,7 @@ export const selectOption = (option: number) => {
 };
 
 export const selectPlaylistOption = (option: number) => {
-  return { type: 'CHANGE_OPTION', option: option };
+  return { type: 'CHANGE_PLAYLIST_OPTION', option: option };
 };
 
 export const showPlatformSelection = (option: boolean) => {
