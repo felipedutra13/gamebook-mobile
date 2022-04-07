@@ -5,11 +5,9 @@ import { StyleSheet, TouchableOpacity, Image } from 'react-native';
 const Cover = (props) => {
     const game = props.game;
     const isPopularPage = props.isPopularPage;
-    // const navigation = useNavigation();
     const navigation = props.navigation;
 
     function handleGameSelect(id: number, title: string) {
-        // navigation.navigate('GameDetail', { id: id, title: title });
         navigation.push('GameDetail', { id: id, title: title });
     }
 
@@ -21,7 +19,7 @@ const Cover = (props) => {
                 style={[isPopularPage ? styles.coverSpace : {},
                 ]}
             >
-                <Image style={styles.cover} source={{ uri: game.imageUrl }} />
+                {game.imageUrl && game.imageUrl != '' ? <Image style={styles.cover} source={{ uri: game.imageUrl }} /> : null}
             </TouchableOpacity>
         </>
     )
@@ -33,7 +31,6 @@ const styles = StyleSheet.create({
     cover: {
         backgroundColor: "#fff",
         borderWidth: 2,
-        // borderColor: "#eee", ////
         height: 210,
         width: 150,
         borderRadius: 8,

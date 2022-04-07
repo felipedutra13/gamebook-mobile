@@ -1,25 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Text, StyleSheet, TouchableOpacity, Image, View, ScrollView } from 'react-native';
+import { Text, StyleSheet, View, ScrollView } from 'react-native';
 import api from '../../services/api';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Platforms from '../../components/Platforms';
 import Cover from '../../components/Cover';
 import { replacePlatforms } from '../../actions';
-import { Platform } from '../../interfaces/Platform';
-import { setEmail, signIn, signUp } from '../../actions';
+import { setEmail, signIn } from '../../actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../reducers';
-import { useNavigation } from '@react-navigation/native';
 import { GamesByCategory } from '../../interfaces/GamesByCategory';
 import { trackPromise } from 'react-promise-tracker';
 import Loading from '../../components/Loading';
 import * as SecureStore from 'expo-secure-store';
-import axios, { AxiosError } from 'axios';
-import { showMessage } from 'react-native-flash-message';
+import axios from 'axios';
 
 const Home = ({ navigation }) => {
-    // const navigation = useNavigation();
     const dispatch = useDispatch();
 
     const [gamesByCategory, setGamesByCategory] = useState<GamesByCategory[]>([]);
@@ -43,7 +39,6 @@ const Home = ({ navigation }) => {
             return new Promise((resolve, reject) => {
                 const originalReq = err.config;
                 if (err.response && err.response.status === 401 && err.config && !err.config.retry) {
-                    console.log("TOKEN VENCIDO!");
                     originalReq.retry = true;
                     SecureStore.getItemAsync('token').then(res => {
                         api.put(`/refreshToken`, null,
@@ -55,7 +50,6 @@ const Home = ({ navigation }) => {
                                 dispatch(signIn(response.data.access_token));
                                 dispatch(setEmail(response.data.email));
                                 originalReq.headers['x-access-token'] = response.data.access_token;
-                                console.log("REFRESH TOKEN!");
                                 return axios(originalReq);
                             });
                         resolve(res);
@@ -96,7 +90,6 @@ const Home = ({ navigation }) => {
     }, []);
 
     useEffect(() => {
-        // defineInterceptor();
         SecureStore.getItemAsync('token').then(res => {
             if (res !== null && res !== '') {
                 dispatch(signIn(res));
@@ -107,7 +100,6 @@ const Home = ({ navigation }) => {
                     }
                 }).then(response => {
                     if (response?.data?.length > 0) {
-                        console.log("SETOU O PLATFORMS");
                         dispatch(replacePlatforms(response.data.map(p => Number(p))));
                     }
                 });

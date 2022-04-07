@@ -2,17 +2,20 @@ import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import PlatformsList from '../PlatformsList';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../reducers';
+import { setGamesTotal } from '../../actions';
 
 const GameInfo = (props) => {
+    const navigation = useNavigation();
+    const dispatch = useDispatch();
     const game = props.game;
+    const isSearchPage = props.isSearchPage;
     const filteredPlatforms = useSelector((state: RootState) => state.filteredPlatformsState);
     const selectedPlatforms = useSelector((state: RootState) => state.platformsState);
+    const gamesTotal = useSelector((state: RootState) =>state.gamesTotalState);
 
-    const platforms = game.platforms.filter(p => selectedPlatforms.find(f => f == p || f == p.id));
-
-    const navigation = useNavigation();
+    const platforms = !isSearchPage ? game.platforms.filter(p => selectedPlatforms.find(f => f == p || f == p.id) && !filteredPlatforms.find(f => f == p || f == p.id)) : game.platforms;
 
     function handleGameSelect(id: number, title: string) {
         navigation.navigate('GameDetail', { id: id, title: title });
@@ -28,7 +31,7 @@ const GameInfo = (props) => {
 
     return (
         <>
-            {platforms.length > 0 &&
+            {platforms && platforms.length > 0 &&
                 <TouchableOpacity
                     key={String(game.id)}
                     style={styles.gameContainer}

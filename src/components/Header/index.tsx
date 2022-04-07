@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../reducers';
+import { manuallyResetPromiseCounter } from 'react-promise-tracker';
 
 
 
@@ -29,11 +30,16 @@ const Header = (props) => {
         return name;
     }
 
+    function goBack() {
+        manuallyResetPromiseCounter();
+        navigation.goBack();
+    }
+
     return (
         <>
             <View style={styles.header}>
                 {props.showLogo && <Text style={styles.appTitle}>Gamebook</Text>}
-                {props.showBackButton && <Icon name="arrow-left" color="#FFF" size={24} onPress={() => navigation.goBack()} />}
+                {props.showBackButton && <Icon name="arrow-left" color="#FFF" size={24} onPress={goBack} />}
                 <Text style={styles.title}>{formatName(props.title)}</Text>
                 <TouchableOpacity onPress={handleConfig}>
                     <Icon name="user" color="#FFF" size={24} />

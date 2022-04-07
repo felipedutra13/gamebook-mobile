@@ -44,5 +44,10 @@ export const logout = () => {
 }
 
 export const setEmail = (email: string) => {
-  return { type: "SET_EMAIL", email: email }
+  return { type: "SET_EMAIL", email: email };
+}
+
+export const setGamesTotal = (value: number) => {
+
+  return { type: "SET_GAMES_TOTAL", value: value };
 }

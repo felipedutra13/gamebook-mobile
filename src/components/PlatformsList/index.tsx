@@ -30,6 +30,7 @@ const PlatformsList = (props) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        let isMounted = true;
         if (props.platforms && props.platforms.length > 0) {
             api.get<Platform[]>(`/getPlatforms`, {
                 params: {
@@ -45,9 +46,13 @@ const PlatformsList = (props) => {
                         }
                     });
                 }
-                setPlatforms(tmp);
+                if (isMounted) {
+                    setPlatforms(tmp);
+                }
+
             });
         }
+        return () => isMounted = false;
     }, []);
 
     async function handleSelectedPlatform(platform: Platform) {
@@ -89,6 +94,24 @@ const PlatformsList = (props) => {
         return false;
     }
 
+    function getDiscountPercentage(price: Price, additionalDiscount: boolean) {
+        let discountValue = additionalDiscount ? price.additionalDiscount : price.discount;
+        if (discountValue) {
+            let percentage = (Number(discountValue.replace(/[^\d.-]/g, '')) / Number(price.price.replace(/[^\d.-]/g, ''))) * 100;
+            return "-" + (100 - percentage).toFixed(0) + "%";
+        }
+
+        return "";
+    }
+
+    function getAdditionalInfo(price: Price) {
+        if (price.additionalInfo == 'gamePass') {
+            return "GAME PASS";
+        }
+
+        return "";
+    }
+
     const Item = ({ item }) => (
         <TouchableOpacity
             key={String(item.id)}
@@ -99,6 +122,10 @@ const PlatformsList = (props) => {
                 <Image style={styles.platform} source={{ uri: item.image_url }} />
                 {item.price && (<Text style={[hasDiscount(item.price) ? styles.priceDiscount : styles.price]}>{item.price.price}</Text>)}
                 {item.price && item.price.discount != "" && (<Text style={styles.price}>{item.price.discount}</Text>)}
+                {item.price && item.price.discount != "" && (<Text style={styles.discountPercentage}>{getDiscountPercentage(item.price, false)}</Text>)}
+                {item.price && item.price.additionalDiscount && item.price.additionalDiscount != "" ? (<Text style={styles.additionalDiscount}>{item.price.additionalDiscount}</Text>) : null}
+                {item.price && item.price.additionalDiscount && item.price.additionalDiscount != "" ? (<Text style={styles.additionalDiscountPercentage}>{getDiscountPercentage(item.price, true)}</Text>) : null}
+                {item.price && item.price.additionalInfo && item.price.additionalInfo != "" ? (<Text style={styles.additionalInfo}>{getAdditionalInfo(item.price)}</Text>) : null}
             </View>
         </TouchableOpacity>
     );
@@ -176,6 +203,37 @@ const styles = StyleSheet.create({
         left: 0,
         fontSize: 10,
         textDecorationLine: 'line-through'
+    },
+
+    discountPercentage: {
+        color: "#000000",
+        backgroundColor: "#ffffff",
+        borderRadius: 5,
+        fontSize: 10,
+        padding: 2
+    },
+
+    additionalDiscount: {
+        color: "#FFFF33",
+        left: 0,
+        fontSize: 10,
+    },
+
+    additionalDiscountPercentage: {
+        color: "#000000",
+        backgroundColor: "#FFFF33",
+        borderRadius: 5,
+        fontSize: 10,
+        padding: 2
+    },
+
+    additionalInfo: {
+        backgroundColor: "#00CC00",
+        color: "#FFFFFF",
+        left: 0,
+        fontSize: 7,
+        borderRadius: 5,
+        padding: 2
     }
 
 

@@ -6,11 +6,12 @@ import Header from '../../components/Header';
 import Platforms from '../../components/Platforms';
 import GameplayOptions from '../../components/GameplayOptions';
 import GameInfo from '../../components/GameInfo';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../reducers';
 import { trackPromise } from 'react-promise-tracker';
 import Loading from '../../components/Loading';
 import RNPickerSelect from 'react-native-picker-select';
+import { setGamesTotal } from '../../actions';
 
 interface Game {
     id: number;
@@ -26,6 +27,7 @@ const Playlist = () => {
     const selectedPlatforms = useSelector((state: RootState) => state.platformsState);
     const filteredPlatforms = useSelector((state: RootState) => state.filteredPlatformsState);
     const token = useSelector((state: RootState) => state.authState);
+    // const gamesTotal = useSelector((state: RootState) => state.gamesTotalState);
 
     const [offset, setOffset] = useState(0);
     const [games, setGames] = useState<Game[]>([]);
@@ -34,9 +36,14 @@ const Playlist = () => {
     const [moreGames, setMoreGames] = useState(true);
     const [orderBy, setOrderBy] = useState('name');
 
+    let onEndReachedCalledDuringMomentum = true;
+
+    const dispatch = useDispatch();
+
     useEffect(() => {
         setMoreGames(false);
         setOffset(0);
+        // dispatch(setGamesTotal(0));
         setGamesTotal(0);
         setGames([]);
 
@@ -55,7 +62,13 @@ const Playlist = () => {
             }
             ).then(response => {
                 if (mounted) {
+                    // const gamesWithPlatforms = response.data.games
+                    //     .filter(game => game.platforms
+                    //         .filter(p => selectedPlatforms.find(f => f == p || f == p.id) && !filteredPlatforms
+                    //             .find(f => f == p || f == p.id)));
+                    // setGames(gamesWithPlatforms);
                     setGames(response.data.games);
+                    // dispatch(setGamesTotal(response.data.total));
                     setGamesTotal(response.data.total);
 
                 }
@@ -87,7 +100,8 @@ const Playlist = () => {
                         let tmp = games;
                         let result = tmp.concat(response.data.games);
                         setGames(result);
-                        setGamesTotal(response.data.total);
+                        // dispatch(setGamesTotal(response.data.total));
+                        // setGamesTotal(response.data.total);
                     }
                 })
             );
@@ -178,10 +192,13 @@ const Playlist = () => {
                         data={games}
                         renderItem={renderItem}
                         keyExtractor={(item) => String(item.id)}
+                        onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum = false; }}
+                        // initialNumToRender={2}
                         onEndReachedThreshold={0.5}
-                        onEndReached={({ distanceFromEnd }) => {
-                            if (distanceFromEnd < 0) return;
-                            getMoreGames();
+                        onEndReached={() => onEndReachedCalledDuringMomentum = true}
+                        onMomentumScrollEnd={() => {
+                            onEndReachedCalledDuringMomentum && getMoreGames()
+                            onEndReachedCalledDuringMomentum = false
                         }}
                         numColumns={1}
                         ListHeaderComponent={() => renderHeader(gamesTotal)}

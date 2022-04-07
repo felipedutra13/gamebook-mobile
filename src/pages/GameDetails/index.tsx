@@ -91,6 +91,7 @@ const GameDetails = ({ route, navigation }) => {
     ];
 
     useEffect(() => {
+        let isMounted = true;
         trackPromise(
             api.get<GameDetail>(`/getGameDetails`, {
                 params: {
@@ -98,8 +99,12 @@ const GameDetails = ({ route, navigation }) => {
                     title: title
                 }
             }).then(response => {
-                setGameDetail(response.data);
+                if (isMounted) {
+                    setGameDetail(response.data);
+                }
             }));
+
+        return () => isMounted = false;
     }, []);
 
     return (

@@ -55,15 +55,18 @@ const GameplayOptions = (props) => {
     ];
 
     useEffect(() => {
-
+        let mounted = true;
         if (isPlaylistPage) {
             return;
         }
         dispatch(selectOption(null));
 
         if (game) {
-            getGameUser();
+            if (mounted) {
+                getGameUser();
+            }
         }
+        return () => mounted = false;
     }, []);
 
     async function getGameUser() {
@@ -103,6 +106,8 @@ const GameplayOptions = (props) => {
                 }
             }).then(response => {
             });
+
+        dispatch(selectOption(status));
     }
 
     async function removeGame() {
@@ -119,7 +124,6 @@ const GameplayOptions = (props) => {
                 }
             }
         ).catch((err: AxiosError) => {
-            // Alert.alert(err.response.data.message);
             console.log(err.message);
         });
     }
@@ -143,15 +147,14 @@ const GameplayOptions = (props) => {
             if (!isPlaylistPage && item !== 1) {
                 dispatch(showPlatformSelection(true));
                 setAuxOption(item);
-            } else {
+            } else if (isPlaylistPage) {
                 handlePlaylistPage(item);
-                if (!isPlaylistPage) {
-                    updateWishlistStatus(item);
-                    showMessage({
-                        message: `${game.igdbData.title} adicionado a Lista de desejos!`,
-                        type: "success",
-                    });
-                }
+            } else {
+                updateWishlistStatus(item);
+                showMessage({
+                    message: `${game.igdbData.title} adicionado a Lista de desejos!`,
+                    type: "success",
+                });
             }
         }
     }

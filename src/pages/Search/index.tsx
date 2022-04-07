@@ -13,6 +13,7 @@ interface Game {
     id: number,
     title: string,
     imageUrl: string;
+    platforms: any[];
 };
 
 const Search = () => {
@@ -28,12 +29,14 @@ const Search = () => {
         setOffset(0);
         setSelectedGames([]);
         const delayDebounceFn = setTimeout(() => {
-            // Send Axios request here
             if (searchString != "") {
                 setSearchTermChanged(true);
                 trackPromise(
                     api.get<Game[]>(`/search?title=${searchString}&offset=${offset}`).then(response => {
                         setSelectedGames(response.data);
+                        
+                    }).catch(err => {
+                        console.log(err.toString());
                     }));
             }
         }, 2000)
@@ -62,7 +65,7 @@ const Search = () => {
 
     const renderItem = ({ item }) => {
         return (
-            <GameInfo key={String(item.id)} game={item} />
+            <GameInfo key={String(item.id)} game={item} isSearchPage={true}/>
         );
     };
 
