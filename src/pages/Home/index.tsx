@@ -116,7 +116,7 @@ const Home = ({ navigation }) => {
         <>
             <View style={styles.container}>
 
-                <Header showLogo={true} />
+                <Header showLogo={true} navigation={navigation} />
                 <Loading searchTermChanged={true} />
                 <View>
 

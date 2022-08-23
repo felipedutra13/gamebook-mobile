@@ -110,7 +110,7 @@ const GameDetails = ({ route, navigation }) => {
     return (
         <>
             <View style={styles.container}>
-                <Header showBackButton={true} title={title} />
+                <Header showBackButton={true} title={title} navigation={navigation} />
                 <Loading searchTermChanged={true} />
                 <View style={styles.detailContainer}>
 

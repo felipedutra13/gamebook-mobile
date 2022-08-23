@@ -107,28 +107,34 @@ const PlatformsList = (props) => {
     function getAdditionalInfo(price: Price) {
         if (price.additionalInfo == 'gamePass') {
             return "GAME PASS";
+        } else if (price.additionalInfo == 'plus') {
+            return "PLUS"
         }
 
         return "";
     }
 
-    const Item = ({ item }) => (
-        <TouchableOpacity
-            key={String(item.id)}
-            activeOpacity={0.7}
-            onPress={() => handleSelectedPlatform(item)}
-        >
-            <View style={styles.availableContainer}>
-                <Image style={styles.platform} source={{ uri: item.image_url }} />
-                {item.price && (<Text style={[hasDiscount(item.price) ? styles.priceDiscount : styles.price]}>{item.price.price}</Text>)}
-                {item.price && item.price.discount != "" && (<Text style={styles.price}>{item.price.discount}</Text>)}
-                {item.price && item.price.discount != "" && (<Text style={styles.discountPercentage}>{getDiscountPercentage(item.price, false)}</Text>)}
-                {item.price && item.price.additionalDiscount && item.price.additionalDiscount != "" ? (<Text style={styles.additionalDiscount}>{item.price.additionalDiscount}</Text>) : null}
-                {item.price && item.price.additionalDiscount && item.price.additionalDiscount != "" ? (<Text style={styles.additionalDiscountPercentage}>{getDiscountPercentage(item.price, true)}</Text>) : null}
-                {item.price && item.price.additionalInfo && item.price.additionalInfo != "" ? (<Text style={styles.additionalInfo}>{getAdditionalInfo(item.price)}</Text>) : null}
-            </View>
-        </TouchableOpacity>
-    );
+    const Item = ({ item }) => {
+        const isPlus = item.price && item.price.additionalInfo && item.price.additionalInfo != "" && item.price.additionalInfo == 'plus';
+
+        return (
+            <TouchableOpacity
+                key={String(item.id)}
+                activeOpacity={0.7}
+                onPress={() => handleSelectedPlatform(item)}
+            >
+                <View style={styles.availableContainer}>
+                    <Image style={styles.platform} source={{ uri: item.image_url }} />
+                    {item.price && (<Text style={[hasDiscount(item.price) ? styles.priceDiscount : styles.price]}>{item.price.price}</Text>)}
+                    {item.price && item.price.discount != "" && (<Text style={styles.price}>{item.price.discount}</Text>)}
+                    {item.price && item.price.discount != "" && (<Text style={styles.discountPercentage}>{getDiscountPercentage(item.price, false)}</Text>)}
+                    {item.price && item.price.additionalDiscount && item.price.additionalDiscount != "" ? (<Text style={styles.additionalDiscount}>{item.price.additionalDiscount}</Text>) : null}
+                    {item.price && item.price.additionalDiscount && item.price.additionalDiscount != "" ? (<Text style={styles.additionalDiscountPercentage}>{getDiscountPercentage(item.price, true)}</Text>) : null}
+                    {item.price && item.price.additionalInfo && item.price.additionalInfo != "" ? (<Text style={[isPlus ? styles.additionalInfoPlus : styles.additionalInfo]}>{getAdditionalInfo(item.price)}</Text>) : null}
+                </View>
+            </TouchableOpacity>
+        );
+    }
 
 
     const renderItem = ({ item }) => {
@@ -233,7 +239,18 @@ const styles = StyleSheet.create({
         left: 0,
         fontSize: 7,
         borderRadius: 5,
-        padding: 2
+        padding: 2,
+        marginTop: 2
+    },
+
+    additionalInfoPlus: {
+        backgroundColor: "#FFFF33",
+        color: "#000000",
+        left: 0,
+        fontSize: 7,
+        borderRadius: 5,
+        padding: 2,
+        marginTop: 2
     }
 
 

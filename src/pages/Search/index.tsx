@@ -59,7 +59,7 @@ const Search = () => {
     }, [offset]);
 
     function getMoreGames() {
-        let increment = offset + 10;
+        let increment = offset + 50;
         setOffset(increment);
     }
 

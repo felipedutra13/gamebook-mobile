@@ -113,7 +113,7 @@ const Playlist = () => {
     function getMoreGames() {
         if (games.length < gamesTotal) {
             setMoreGames(true);
-            let increment = offset + 10;
+            let increment = offset + 50;
             setOffset(increment);
         }
     }

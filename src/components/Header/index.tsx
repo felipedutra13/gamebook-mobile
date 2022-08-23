@@ -1,18 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Feather as Icon } from '@expo/vector-icons';
-import { Text, StyleSheet, View, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { Text, StyleSheet, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../reducers';
 import { manuallyResetPromiseCounter } from 'react-promise-tracker';
+import api from '../../services/api';
+import { useIsFocused } from '@react-navigation/native';
 
-
+interface Notification {
+    id: number;
+    game_id: number;
+    user_id: number;
+    date: Date;
+    active: boolean;
+};
 
 const Header = (props) => {
-    const navigation = useNavigation();
+    let navigation = props.navigation;
+    let notifications = [];
+    let [total, setTotal] = useState(0);
+    const ifFocused = useIsFocused();
 
     const token = useSelector((state: RootState) => state.authState);
+
+    if (token && ifFocused) {
+        api.get<Notification[]>(`/getUserNotifications`, {
+            headers: {
+                'x-access-token': token
+            }
+        }).then(response => {
+            if (response?.data) {
+                let totalNotifications = response.data.reduce((value, current) => current.active ? ++value : value, 0);
+                notifications = response.data;
+                setTotal(totalNotifications);
+            }
+        });
+    }
 
     function handleConfig() {
         if (token && token !== '') {
@@ -20,6 +44,15 @@ const Header = (props) => {
         } else {
             navigation.navigate('Login');
         }
+    }
+
+    function handleNotifications() {
+        api.post(`/updateUserNotifications`, {
+            headers: {
+                'x-access-token': token
+            }
+        });
+        navigation.push('Notifications', { notifications });
     }
 
     function formatName(name: string) {
@@ -41,6 +74,18 @@ const Header = (props) => {
                 {props.showLogo && <Text style={styles.appTitle}>Gamebook</Text>}
                 {props.showBackButton && <Icon name="arrow-left" color="#FFF" size={24} onPress={goBack} />}
                 <Text style={styles.title}>{formatName(props.title)}</Text>
+                {token ? (
+                    <>
+                        <TouchableOpacity onPress={handleNotifications}>
+                            <Icon name="bell" color="#FFF" size={24} />
+                        </TouchableOpacity>
+                        {total > 0 ? (
+                            <View style={styles.circle}>
+                                <Text style={styles.notificationsSize}>{total}</Text>
+                            </View>
+                        ) : null}
+                    </>
+                ) : null}
                 <TouchableOpacity onPress={handleConfig}>
                     <Icon name="user" color="#FFF" size={24} />
                 </TouchableOpacity>
@@ -93,5 +138,33 @@ const styles = StyleSheet.create({
         fontSize: 20,
         left: 10,
         width: "80%"
-    }
+    },
+
+    modalView: {
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: "yellow",
+        backgroundColor: "#000",
+        padding: 10,
+        width: 300,
+        // alignItems: "center",
+        height: 170
+    },
+
+    circle: {
+        backgroundColor: "red",
+        width: 24,
+        height: 24,
+        borderRadius: 24 / 2,
+        left: -11,
+        top: -10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
+    notificationsSize: {
+        color: "white"
+        // justifyContent: 'center',
+        // alignItems: 'center'
+    },
 });

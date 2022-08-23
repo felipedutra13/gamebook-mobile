@@ -20,6 +20,7 @@ import FAQ from './pages/FAQ';
 import ForgotPassword from './pages/ForgotPassword';
 import FillCode from './pages/FillCode';
 import ResetPassword from './pages/ResetPassword';
+import Notifications from './pages/Notifications';
 import FlashMessage from "react-native-flash-message";
 import { StatusBar } from 'react-native';
 
@@ -52,6 +53,7 @@ const Routes = () => {
                     <AppStack.Screen name="ForgotPassword" component={ForgotPassword} />
                     <AppStack.Screen name="FillCode" component={FillCode} />
                     <AppStack.Screen name="ResetPassword" component={ResetPassword} />
+                    <AppStack.Screen name="Notifications" component={Notifications} />
                 </AppStack.Navigator>
             </NavigationContainer>
             <FlashMessage position="bottom" />

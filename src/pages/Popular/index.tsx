@@ -56,7 +56,7 @@ const Popular = () => {
     }, [platforms]);
 
     function getMorePopularGames() {
-        let increment = offset + 10;
+        let increment = offset + 50;
         setOffset(increment);
     }
 
