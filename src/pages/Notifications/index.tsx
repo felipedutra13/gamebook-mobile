@@ -48,7 +48,7 @@ const Notification = (props) => {
 
     const renderItem = ({ item }) => {
         return (
-            <GameInfo key={String(item.id)} game={item} />
+            <GameInfo key={String(item.id)} game={item} isSearchPage={true}/>
         );
     };
 
