@@ -62,20 +62,14 @@ const Playlist = () => {
             }
             ).then(response => {
                 if (mounted) {
-                    // const gamesWithPlatforms = response.data.games
-                    //     .filter(game => game.platforms
-                    //         .filter(p => selectedPlatforms.find(f => f == p || f == p.id) && !filteredPlatforms
-                    //             .find(f => f == p || f == p.id)));
-                    // setGames(gamesWithPlatforms);
                     setGames(response.data.games);
-                    // dispatch(setGamesTotal(response.data.total));
                     setGamesTotal(response.data.total);
 
                 }
             })
         );
 
-        return () => mounted = false;
+        mounted = false;
     }, [selectedOption, selectedPlatforms, filteredPlatforms, orderBy]);
 
     // Busca mais resultados
@@ -100,14 +94,12 @@ const Playlist = () => {
                         let tmp = games;
                         let result = tmp.concat(response.data.games);
                         setGames(result);
-                        // dispatch(setGamesTotal(response.data.total));
-                        // setGamesTotal(response.data.total);
                     }
                 })
             );
         }
 
-        return () => mounted = false;
+        mounted = false;
     }, [offset]);
 
     function getMoreGames() {
@@ -153,23 +145,23 @@ const Playlist = () => {
                             { label: 'Data de lançamento', value: 'first_release_date' }
                         ]}
                         placeholder={{ label: 'Nome', value: 'name' }}
-                        Icon={() => {
-                            return (
-                                <View
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        borderTopWidth: 10,
-                                        borderTopColor: '#fff',
-                                        borderRightWidth: 10,
-                                        borderRightColor: 'transparent',
-                                        borderLeftWidth: 10,
-                                        borderLeftColor: 'transparent',
-                                        width: 0,
-                                        height: 0,
-                                    }}
-                                />
-                            );
-                        }}
+                        // Icon={() => {
+                        //     return (
+                        //         <View
+                        //             style={{
+                        //                 backgroundColor: 'transparent',
+                        //                 borderTopWidth: 10,
+                        //                 borderTopColor: '#fff',
+                        //                 borderRightWidth: 10,
+                        //                 borderRightColor: 'transparent',
+                        //                 borderLeftWidth: 10,
+                        //                 borderLeftColor: 'transparent',
+                        //                 width: 0,
+                        //                 height: 0,
+                        //             }}
+                        //         />
+                        //     );
+                        // }}
                     />
                 </View>
             </>
@@ -193,7 +185,6 @@ const Playlist = () => {
                         renderItem={renderItem}
                         keyExtractor={(item) => String(item.id)}
                         onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum = false; }}
-                        // initialNumToRender={2}
                         onEndReachedThreshold={0.5}
                         onEndReached={() => onEndReachedCalledDuringMomentum = true}
                         onMomentumScrollEnd={() => {
@@ -223,21 +214,13 @@ const pickerSelectStyles = StyleSheet.create({
         borderColor: 'gray',
         borderRadius: 4,
         color: 'white',
-        paddingRight: 30, // to ensure the text is never behind the icon
+        paddingRight: 30
     },
     inputAndroid: {
-        // paddingLeft: -30,
         top: -3,
-        // left: -40,
         fontSize: 14,
         color: "#fff",
-        // paddingHorizontal: 10,
-        // paddingVertical: 8,
-        // borderWidth: 0.5,
-        // borderColor: 'red',
-        // borderRadius: 8,
-        // color: 'red',
-        paddingRight: 30, // to ensure the text is never behind the icon
+        paddingRight: 30
     },
 });
 

@@ -9,14 +9,10 @@ import { useNavigation } from '@react-navigation/native';
 import { AxiosError } from 'axios';
 import Loading from '../../components/Loading';
 import { trackPromise } from 'react-promise-tracker';
-import * as Google from 'expo-google-app-auth';
+import { GoogleSignin, GoogleSigninButton, statusCodes, } from '@react-native-google-signin/google-signin';
 import RNPasswordStrengthMeter from 'react-native-password-strength-meter';
 import config from '../../../config';
 import { showMessage } from 'react-native-flash-message';
-
-const ANDROID_CLIENT_ID = "488976892573-e736r27mphc3raqbj69728m8a0ljkur2.apps.googleusercontent.com";
-const IOS_CLIENT_ID = "488976892573-4n00tcooi5hnrt80ike55h2e7sr42d8o.apps.googleusercontent.com";
-const ANDROID_STANDALONE_CLIENT_ID = "488976892573-dr4mcdfintus991ju1qnf7gtpn4d173i.apps.googleusercontent.com"
 
 interface Token {
     auth: boolean;
@@ -25,6 +21,7 @@ interface Token {
 }
 
 const Login = () => {
+    GoogleSignin.configure();
     const [emailTerm, setEmailTerm] = useState('');
     const [passwordTerm, setPasswordTerm] = useState('');
     const [textVisible, setTextVisible] = useState(true);
@@ -59,31 +56,21 @@ const Login = () => {
 
     async function signInWithGoogleAux() {
         try {
-            const response = await Google.logInAsync({
-                androidClientId: ANDROID_CLIENT_ID,
-                iosClientId: IOS_CLIENT_ID,
-                androidStandaloneAppClientId: ANDROID_STANDALONE_CLIENT_ID,
-                scopes: ['profile', 'email'],
-            });
-
-            if (response.type === 'success') {
-                api.post<Token>(`/signInWithGoogle`, { email: response.user.email, user_id: response.user.id }).then(response => {
-                    dispatch(signIn(response.data.access_token));
-                    dispatch(setEmail(response.data.email));
-                    showMessage({
-                        message: "Login efetuado com sucesso!",
-                        type: "success",
-                    });
-                    navigation.goBack();
-                }).catch((err: AxiosError) => {
-                    Alert.alert(err.response.data.message);
+            const response = await GoogleSignin.signIn();
+            api.post<Token>(`/signInWithGoogle`, { email: response.user.email, user_id: response.user.id }).then(response => {
+                dispatch(signIn(response.data.access_token));
+                dispatch(setEmail(response.data.email));
+                showMessage({
+                    message: "Login efetuado com sucesso!",
+                    type: "success",
                 });
-            } else {
-                Alert.alert("Não foi possível realizar o login!");
-            }
-        } catch (e) {
-            // Alert.alert("Não foi possível realizar o login!");
-            Alert.alert("Erro: " + e);
+                navigation.goBack();
+            }).catch((err: AxiosError) => {
+                Alert.alert(err.response.data.message);
+            });
+        } catch (error) {
+            Alert.alert("Não foi possível realizar o login!");
+            console.log("chamada de signInWithGoogleAux, erro:", error);
         }
     }
 
@@ -120,11 +107,6 @@ const Login = () => {
                         onChangeText={setEmailTerm}
 
                     />
-
-                    {/* <TextInput style={styles.passwordInput} onChangeText={setPasswordTerm} />
-                    <BarPasswordStrengthDisplay
-                        password={passwordTerm}
-                    /> */}
                     <View style={styles.passwordInput}>
                         <RNPasswordStrengthMeter
                             width={10}
@@ -163,7 +145,7 @@ const Login = () => {
                         onPress={() => navigation.navigate('ForgotPassword')}
                         style={styles.forgotPassword}
                     >
-                        {/* {showLoadingCom && <Loading login={true} />} */}
+                        {showLoadingCom && <Loading login={true} />}
                         <Text style={styles.textStyle}>Esqueci minha senha</Text>
                     </Pressable>
 
@@ -243,7 +225,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         left: 260,
-        padding: 15,
+        // padding: 15,
         elevation: 2,
         backgroundColor: "#fff",
         top: 115,
@@ -258,7 +240,7 @@ const styles = StyleSheet.create({
         // left: 90,
         marginLeft: 'auto',
         marginRight: 'auto',
-        padding: 15,
+        // padding: 15,
         elevation: 2,
         backgroundColor: "#fff",
         top: 220,
@@ -274,11 +256,11 @@ const styles = StyleSheet.create({
         // left: 90,
         marginLeft: 'auto',
         marginRight: 'auto',
-        padding: 15,
+        // padding: 15,
         // elevation: 2,
         backgroundColor: "#4285F4",
         top: 170,
-        height: 30
+        // height: 45
     },
 
     textStyle: {
@@ -316,12 +298,7 @@ const styles = StyleSheet.create({
         height: 30,
         width: 30,
         borderRadius: 8,
-        left: -15
-        // paddingHorizontal: 16,
-        // paddingTop: 20,
-        // paddingBottom: 16,
-        // marginRight: 8,
-        // alignItems: "center"
+        left: -30
     },
 
     googleContainer: {

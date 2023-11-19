@@ -14,6 +14,11 @@
       "android": {
         "image": "latest"
       }
+    },
+    "apk": {
+      "android": {
+        "buildType": "apk"
+      }
     }
   },
   "submit": {

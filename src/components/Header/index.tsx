@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Feather as Icon } from '@expo/vector-icons';
+import Feather from '@expo/vector-icons/Feather';
 import { Text, StyleSheet, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
@@ -72,12 +72,12 @@ const Header = (props) => {
         <>
             <View style={styles.header}>
                 {props.showLogo && <Text style={styles.appTitle}>Gamebook</Text>}
-                {props.showBackButton && <Icon name="arrow-left" color="#FFF" size={24} onPress={goBack} />}
+                {props.showBackButton && <Feather name="arrow-left" color="#FFF" size={24} onPress={goBack} />}
                 <Text style={styles.title}>{formatName(props.title)}</Text>
                 {token ? (
                     <>
                         <TouchableOpacity onPress={handleNotifications}>
-                            <Icon name="bell" color="#FFF" size={24} />
+                            <Feather name="bell" color="#FFF" size={24} />
                         </TouchableOpacity>
                         {total > 0 ? (
                             <View style={styles.circle}>
@@ -87,7 +87,7 @@ const Header = (props) => {
                     </>
                 ) : null}
                 <TouchableOpacity onPress={handleConfig}>
-                    <Icon name="user" color="#FFF" size={24} />
+                    <Feather name="user" color="#FFF" size={24} />
                 </TouchableOpacity>
             </View>
         </>

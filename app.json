@@ -22,19 +22,16 @@
             "userInterfaceStyle": "light"
         },
         "android": {
-            "config": {
-                "googleSignIn": {
-                    "apiKey": "AIzaSyBQnnJyaC-CTJ_nETPIJF_hQ-OLYQOUrhw",
-                    "certificateHash": "C1FD91FF7280917D7224F55868C828276992FBA9"
-                }
-            },
             "userInterfaceStyle": "light",
-            "package": "com.gamebook",
+            "package": "com.dutra.gamebook",
             "adaptiveIcon": {
                 "foregroundImage": "./assets/icon-gb.png",
                 "backgroundColor": "#FFFFFF"
             }
         },
+        "plugins": [
+            "@react-native-google-signin/google-signin"
+        ],
         "web": {
             "favicon": "./assets/favicon.png"
         },

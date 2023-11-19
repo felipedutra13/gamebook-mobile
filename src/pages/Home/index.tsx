@@ -72,6 +72,8 @@ const Home = ({ navigation }) => {
                     }
                 }).then(response => {
                     setGamesByCategory(response.data);
+                }).catch(err => {
+                    console.log("CAIU NO CATCH 77", err);
                 })
             );
         } else {
@@ -81,6 +83,8 @@ const Home = ({ navigation }) => {
                 }
             }).then(response => {
                 setGamesByCategory(response.data);
+            }).catch(err => {
+                console.log("CAIU NO CATCH 88", err);
             })
         }
     }, [selectedPlatforms, filteredPlatforms]);
@@ -104,11 +108,15 @@ const Home = ({ navigation }) => {
                     }
                 });
             }
+        }).catch(err => {
+            console.log("catch na linha 112", err, "acho q eh so nao fazer nada!");
         });
         SecureStore.getItemAsync('email').then(res => {
             if (res !== null && res !== '') {
                 dispatch(setEmail(res));
             }
+        }).catch(err => {
+            console.log("catch na linha 119", err, "acho q eh so nao fazer nada!");
         });
     }, [token]);
 

@@ -4,11 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Text, StyleSheet, TouchableOpacity, Image, View, ScrollView, SafeAreaView, FlatList, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import api from '../../services/api';
-import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Cover from '../../components/Cover';
-import { Platform } from '../../interfaces/Platform';
 import Platforms from '../../components/Platforms';
 import { RootState } from '../../reducers';
 

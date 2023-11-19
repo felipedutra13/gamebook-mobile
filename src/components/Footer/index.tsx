@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Feather as Icon } from '@expo/vector-icons';
+import Feather from '@expo/vector-icons/Feather';
 import { Text, StyleSheet, View, TouchableOpacity, Alert, BackHandler } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -39,19 +39,19 @@ const Footer = (props) => {
     return (
         <View style={styles.footer}>
             <TouchableOpacity style={styles.tab} onPress={() => handleSelectedOption('Home')}>
-                <Icon name="home" style={[
+                <Feather name="home" style={[
                     selectedOption == 'Home' ? styles.selectedOption : styles.unselectedOption,
                 ]} size={22} />
             </TouchableOpacity >
 
             <TouchableOpacity style={styles.tab} onPress={() => handleSelectedOption('Search')}>
-                <Icon name="search" style={[
+                <Feather name="search" style={[
                     selectedOption == 'Search' ? styles.selectedOption : styles.unselectedOption,
                 ]} size={22} />
             </TouchableOpacity >
 
             <TouchableOpacity style={styles.tab} onPress={() => handleSelectedOption('Playlist')}>
-                <Icon name="list" style={[
+                <Feather name="list" style={[
                     selectedOption == 'Playlist' ? styles.selectedOption : styles.unselectedOption,
                 ]} size={22} />
             </TouchableOpacity >
