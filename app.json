@@ -2,7 +2,7 @@
     "expo": {
         "name": "Gamebook",
         "slug": "Gamebook",
-        "version": "1.0.0",
+        "version": "1.0.2",
         "orientation": "portrait",
         "icon": "./assets/icon-gb.png",
         "splash": {
@@ -27,7 +27,8 @@
             "adaptiveIcon": {
                 "foregroundImage": "./assets/icon-gb.png",
                 "backgroundColor": "#FFFFFF"
-            }
+            },
+            "versionCode": 5
         },
         "plugins": [
             "@react-native-google-signin/google-signin"

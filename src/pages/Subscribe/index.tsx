@@ -217,19 +217,6 @@ const styles = StyleSheet.create({
         top: 200
     },
 
-    // loginButton: {
-    //     borderRadius: 8,
-    //     width: 150,
-    //     alignItems: 'center',
-    //     justifyContent: 'center',
-    //     left: 130,
-    //     padding: 15,
-    //     elevation: 2,
-    //     backgroundColor: "red",
-    //     top: 150,
-    //     height: 50
-    // },
-
     loginButton: {
         borderRadius: 8,
         width: 120,
@@ -239,8 +226,7 @@ const styles = StyleSheet.create({
         padding: 15,
         elevation: 2,
         backgroundColor: "#fff",
-        top: 120,
-        height: 30
+        top: 120
     },
 
     textStyle: {

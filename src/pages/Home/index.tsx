@@ -64,6 +64,7 @@ const Home = ({ navigation }) => {
 
     useEffect(() => {
         setGamesByCategory([]);
+        console.log("api", api.defaults)
         if (navigation.isFocused()) {
             trackPromise(
                 api.get<GamesByCategory[]>(`/getGamesList`, {

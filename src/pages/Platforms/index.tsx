@@ -6,7 +6,7 @@ import { Platform } from '../../interfaces/Platform';
 import { addSelectedPlaform, removeSelectedPlaform, replacePlatforms } from '../../actions';
 import { RootState } from '../../reducers';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 
 
 const Platforms = () => {

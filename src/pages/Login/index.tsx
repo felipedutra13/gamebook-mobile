@@ -21,7 +21,9 @@ interface Token {
 }
 
 const Login = () => {
-    GoogleSignin.configure();
+    GoogleSignin.configure({
+        webClientId: '488976892573-bgvs34d2sc4aplnmu254jjfqhi4hum85.apps.googleusercontent.com', // client ID of type 
+    });
     const [emailTerm, setEmailTerm] = useState('');
     const [passwordTerm, setPasswordTerm] = useState('');
     const [textVisible, setTextVisible] = useState(true);
@@ -56,6 +58,8 @@ const Login = () => {
 
     async function signInWithGoogleAux() {
         try {
+            await GoogleSignin.signOut();
+            await GoogleSignin.hasPlayServices();
             const response = await GoogleSignin.signIn();
             api.post<Token>(`/signInWithGoogle`, { email: response.user.email, user_id: response.user.id }).then(response => {
                 dispatch(signIn(response.data.access_token));
@@ -70,7 +74,7 @@ const Login = () => {
             });
         } catch (error) {
             Alert.alert("Não foi possível realizar o login!");
-            console.log("chamada de signInWithGoogleAux, erro:", error);
+            console.log("chamada de signInWithGoogleAux, erro:", error.code);
         }
     }
 

@@ -61,11 +61,11 @@ const Playlist = () => {
                 }
             }
             ).then(response => {
-                if (mounted) {
-                    setGames(response.data.games);
-                    setGamesTotal(response.data.total);
+                // if (mounted) {
+                setGames(response.data.games);
+                setGamesTotal(response.data.total);
 
-                }
+                // }
             })
         );
 
@@ -90,11 +90,11 @@ const Playlist = () => {
                     }
                 }
                 ).then(response => {
-                    if (mounted) {
-                        let tmp = games;
-                        let result = tmp.concat(response.data.games);
-                        setGames(result);
-                    }
+                    // if (mounted) {
+                    let tmp = games;
+                    let result = tmp.concat(response.data.games);
+                    setGames(result);
+                    // }
                 })
             );
         }
@@ -121,6 +121,7 @@ const Playlist = () => {
             <>
                 <Platforms />
 
+
                 <GameplayOptions page='playlist' />
 
                 <View style={styles.list}>
@@ -146,22 +147,8 @@ const Playlist = () => {
                         ]}
                         placeholder={{ label: 'Nome', value: 'name' }}
                         // Icon={() => {
-                        //     return (
-                        //         <View
-                        //             style={{
-                        //                 backgroundColor: 'transparent',
-                        //                 borderTopWidth: 10,
-                        //                 borderTopColor: '#fff',
-                        //                 borderRightWidth: 10,
-                        //                 borderRightColor: 'transparent',
-                        //                 borderLeftWidth: 10,
-                        //                 borderLeftColor: 'transparent',
-                        //                 width: 0,
-                        //                 height: 0,
-                        //             }}
-                        //         />
-                        //     );
-                        // }}
+                        //     return <Chevron size={1.5} color="gray" />;
+                        //   }}
                     />
                 </View>
             </>

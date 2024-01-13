@@ -29,68 +29,67 @@ const GameDetails = ({ route, navigation }) => {
     const token = useSelector((state: RootState) => state.authState);
     const showTable = token && token !== '' ? true : false;
 
-    const [gameDetail, setGameDetail] = useState<GameDetail>();
-    // const [platforms, setPlatforms] = useState<Platform[]>([]);
-    // const [genres, setGenres] = useState<Genre[]>([]);
+    const [gameDetail, setGameDetail] = useState<GameDetail>(null);
 
     const tableRows = [
         {
             id: 1,
             key: "Rating",
-            value: "gameDetail.igdbData.aggregatedRating ? gameDetail.igdbData.aggregatedRating : 'N/A'",
+            value: gameDetail => gameDetail.igdbData.aggregatedRating ? gameDetail.igdbData.aggregatedRating : 'N/A',
             complement: ""
         },
         {
             id: 2,
             key: "Gêneros",
-            value: "gameDetail.igdbData.genres.length > 0 ? gameDetail.igdbData.genres.toString().replace(/,/g, ', ') : 'N/A'",
+            value: gameDetail => gameDetail.igdbData.genres.length > 0 ? gameDetail.igdbData.genres.toString().replace(/,/g, ', ') : 'N/A',
             complement: ""
         },
         {
             id: 3,
             key: "Data de lançamento",
-            value: "gameDetail.igdbData.releaseDate",
+            value: gameDetail => gameDetail.igdbData.releaseDate,
             complement: ""
         },
         {
             id: 4,
             key: "Tempo de gameplay",
-            value: "gameDetail.hltbData && gameDetail.hltbData.gameplayMain ? gameDetail.hltbData.gameplayMain : 'N/A'",
+            value: gameDetail => gameDetail.hltbData && gameDetail.hltbData.gameplayMain ? gameDetail.hltbData.gameplayMain : 'N/A',
             complement: " horas"
         },
         {
             id: 5,
             key: "Tempo de gameplay + extra",
-            value: "gameDetail.hltbData && gameDetail.hltbData.gameplayMainExtra ? gameDetail.hltbData.gameplayMainExtra : 'N/A'",
+            value: gameDetail => gameDetail.hltbData && gameDetail.hltbData.gameplayMainExtra ? gameDetail.hltbData.gameplayMainExtra : 'N/A',
             complement: " horas"
         },
         {
             id: 6,
             key: "Tempo de gameplay complecionista",
-            value: "gameDetail.hltbData && gameDetail.hltbData.gameplayCompletionist ? gameDetail.hltbData.gameplayCompletionist : 'N/A'",
+            value: gameDetail => gameDetail.hltbData && gameDetail.hltbData.gameplayCompletionist ? gameDetail.hltbData.gameplayCompletionist : 'N/A',
             complement: " horas"
         },
         {
             id: 7,
             key: "Modos de jogo",
-            value: "gameDetail.igdbData.gameModes",
+            value: gameDetail => gameDetail.igdbData.gameModes,
             complement: ""
         },
         {
             id: 8,
             key: "Desenvolvedora",
-            value: "gameDetail.igdbData.developer ? gameDetail.igdbData.developer : 'N/A'",
+            value: gameDetail => gameDetail.igdbData.developer ? gameDetail.igdbData.developer : 'N/A',
             complement: ""
         },
         {
             id: 9,
             key: "Publicadora",
-            value: "gameDetail.igdbData.publisher ? gameDetail.igdbData.publisher : 'N/A'",
+            value: gameDetail => gameDetail.igdbData.publisher ? gameDetail.igdbData.publisher : 'N/A',
             complement: ""
         }
     ];
 
     useEffect(() => {
+        setGameDetail(null);
         let isMounted = true;
         trackPromise(
             api.get<GameDetail>(`/getGameDetails`, {
@@ -99,12 +98,12 @@ const GameDetails = ({ route, navigation }) => {
                     title: title
                 }
             }).then(response => {
-                if (isMounted) {
-                    setGameDetail(response.data);
-                }
+                // if (isMounted) {
+                setGameDetail(response.data);
+                // }
             }));
 
-        return () => isMounted = false;
+        isMounted = false;
     }, []);
 
     return (
@@ -114,7 +113,7 @@ const GameDetails = ({ route, navigation }) => {
                 <Loading searchTermChanged={true} />
                 <View style={styles.detailContainer}>
 
-                    {gameDetail && (
+                    {gameDetail ? (
                         <View>
                             <ScrollView>
                                 <Image style={styles.artwork} source={{ uri: gameDetail.igdbData.artworkUrl }} />
@@ -126,7 +125,7 @@ const GameDetails = ({ route, navigation }) => {
                                     <PlatformsList platforms={gameDetail?.igdbData?.platforms} prices={gameDetail?.igdbData?.prices} />
                                 </View>
 
-                                {gameDetail.igdbData.videoIds != null &&
+                                {gameDetail.igdbData.videoIds != null ? (
                                     <View style={styles.trailer}>
                                         <YoutubePlayer
                                             webViewStyle={{ opacity: 0.99 }}
@@ -135,7 +134,7 @@ const GameDetails = ({ route, navigation }) => {
                                             videoId={gameDetail.igdbData.videoIds[0]}
                                         />
                                     </View>
-                                }
+                                ) : null}
 
                                 <View style={styles.tableData}>
                                     {tableRows.map(tr => (
@@ -143,7 +142,7 @@ const GameDetails = ({ route, navigation }) => {
                                             <View style={styles.titleWrapper}>
                                                 <Text style={styles.titleText}>{tr.key}</Text>
                                             </View>
-                                            <Text style={styles.tableText}>{eval(tr.value) + tr.complement}</Text>
+                                            <Text style={styles.tableText}>{tr.value(gameDetail) + tr.complement}</Text>
                                         </View>
                                     ))}
                                 </View>
@@ -190,7 +189,7 @@ const GameDetails = ({ route, navigation }) => {
 
                             </ScrollView>
                         </View>
-                    )}
+                    ) : null}
 
                 </View>
             </View>

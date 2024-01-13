@@ -10,7 +10,6 @@ import { useNavigation } from '@react-navigation/native';
 import { AxiosError } from 'axios';
 import Loading from '../../components/Loading';
 import { trackPromise } from 'react-promise-tracker';
-import * as Google from 'expo-google-app-auth';
 import PasswordInputText from 'react-native-hide-show-password-input';
 // import PasswordField from 'react-native-password-field';
 import RNPasswordStrengthMeter from 'react-native-password-strength-meter';
@@ -163,8 +162,7 @@ const styles = StyleSheet.create({
         padding: 15,
         elevation: 2,
         backgroundColor: "#fff",
-        top: 150,
-        height: 30
+        top: 150
     },
 
     textStyle: {

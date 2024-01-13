@@ -6,7 +6,7 @@ import { addSelectedPlaform, removeSelectedPlaform, replacePlatforms } from '../
 import api from '../../services/api';
 import { Platform } from '../../interfaces/Platform';
 import { RootState } from '../../reducers';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 
 // let count = 0;
 
@@ -24,13 +24,13 @@ const Platforms = () => {
     useEffect(() => {
         let mounted = true;
         api.get<Platform[]>(`/getPlatforms`).then(response => {
-            if (mounted) {
+            // if (mounted) {
                 setPlatformsData(response.data);
                 let userPlaforms = response.data.filter(p => selectedPlatforms.find(t => t === p.externalId));
                 setPlatforms(userPlaforms);
-            }
+            // }
         });
-        return () => mounted = false;
+        mounted = false;
     }, []);
 
     useEffect(() => {

@@ -246,8 +246,7 @@ const styles = StyleSheet.create({
         padding: 15,
         elevation: 2,
         backgroundColor: "#fff",
-        top: 150,
-        height: 30
+        top: 150
     },
 
     textStyle: {

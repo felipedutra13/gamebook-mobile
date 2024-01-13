@@ -46,13 +46,13 @@ const PlatformsList = (props) => {
                         }
                     });
                 }
-                if (isMounted) {
+                // if (isMounted) {
                     setPlatforms(tmp);
-                }
+                // }
 
             });
         }
-        return () => isMounted = false;
+        isMounted = false;
     }, []);
 
     async function handleSelectedPlatform(platform: Platform) {

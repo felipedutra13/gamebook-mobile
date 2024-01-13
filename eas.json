@@ -13,11 +13,17 @@
     "production": {
       "android": {
         "image": "latest"
+      },
+      "env": {
+        "SERVER_URL": "https://ancient-ridge-01571.herokuapp.com/"
       }
     },
     "apk": {
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "SERVER_URL": "https://ancient-ridge-01571.herokuapp.com/"
       }
     }
   },
